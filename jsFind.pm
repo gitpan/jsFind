@@ -5,15 +5,15 @@ use strict;
 use warnings;
 use HTML::Entities;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07_01';
 
-use Exporter 'import';
+use Exporter;
 use Carp;
 
 our @ISA = qw(Exporter);
 
 BEGIN {
-	import 'jsFind::Node';
+	Exporter::import 'jsFind::Node';
 }
 
 =head1 NAME

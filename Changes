@@ -1,4 +1,12 @@
 ------------------------------------------------------------------------
+r39 | dpavlin | 2004-12-20 00:26:23 +0100 (Mon, 20 Dec 2004) | 3 lines
+Changed paths:
+   M /trunk/jsFind.pm
+
+support for older Export which doesn't export 'import'. This should make
+jsFind functional on perl 5.8.2 (on Darwin for example)
+
+------------------------------------------------------------------------
 r38 | dpavlin | 2004-10-31 02:34:01 +0100 (Sun, 31 Oct 2004) | 2 lines
 Changed paths:
    M /trunk/MANIFEST
