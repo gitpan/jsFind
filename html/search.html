@@ -11,28 +11,35 @@
   </head>
 
   <body>
-
-    <h1>Example Search with jsFind</h3>
+   <div>
+    <h1>Example Search with jsFind</h1>
 
     <script type="text/javascript">
+    // <!--
       var args=getArgs();
       function select_option(value,text,selected) {
         document.write('<option value="'+value+'"');
 	if (value == selected) document.write(' selected');
 	document.write('>'+text+'</option>');
       }
+    // -->
     </script>
     
-    <form name="search" onsubmit="return go(this);">
-      <font color="maroon">Query</font>
+    <form id="search" action="get" onsubmit="return go(this);">
+    <div>
+      <span style="color: maroon;">Query</span>
       <script type="text/javascript">
+      // <!--
         document.write('<select name="index_name">');
         select_option("lorem","Lorem example",args.index_name);
         select_option("words","Words from dict",args.index_name);
+        select_option("homer","Homer: The Odyssey",args.index_name);
         document.write('</select>');
+      // -->
       </script>
       for
       <script type="text/javascript">
+      // <!--
         document.write("<input name=\"query\" value=\"");
 
         if (args.query) {
@@ -41,23 +48,31 @@
         }
 
         document.write("\" type=\"text\" size=\"60\"/>\n");
+      // -->
       </script>
 
-      <input type="SUBMIT" value="Submit"/><br/>
+      <input type="submit" value="Submit"/><br/>
+    </div>
     </form>
 
     <script type="text/javascript">
-
+    // <!--
       if (args.query) {
         document.write("<div id=\"results\"><h2>Please wait...</h2></div>\n");
         doSearch(args.index_name, args.query, printResults);
       }      
-
+    // -->
     </script>
 
-    <p>Enter your keywords to search for seperated by spaces.<br/>The
+    <div>
+      Enter your keywords to search for seperated by spaces.<br/>The
       results will be only those documents which contain <b>ALL</b> of the
-      requested keywords</p>
+      requested keywords
+    </div>
 
+    <div id="debug" style="color: gray;">
+    </div>
+
+   </div>
   </body>
 </html>

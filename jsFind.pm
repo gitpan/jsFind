@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use HTML::Entities;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use Exporter 'import';
 use Carp;
@@ -18,7 +18,7 @@ BEGIN {
 
 =head1 NAME
 
-jsFind - generate index for jsFind using B-Tree
+jsFind - generate index for full text search engine in JavaScript
 
 =head1 SYNOPSIS
 
@@ -53,12 +53,57 @@ You don't need to use swish-e to create index
 
 =item *
 
-You can programatically (and incrementaly) create index for jsFind
+you can programatically (and incrementaly) create index for jsFind
+
+=item *
+
+you can create more than one index and search them using same C<search.html>
+page
 
 =back
 
 You can also examine examples which come as tests with this module,
-for example C<t/04words.t>.
+for example C<t/04words.t> or C<t/10homer.t>.
+
+=head2 jsFind
+
+jsFind search engine was written by Shawn Garbett from eLucid Software.
+The search engine itself is a small piece of JavaScript (1.2 with level 2
+DOM). It is easily customizable to fit into a current set of HTML. This
+JavaScript searches an XML index dataset for the appropriate links, and can
+filter and sort the results.
+
+JavaScript code distributed with this module is based on version 0.0.3 which
+was current when this module development started. Various changes where done
+on JavaScript code to fix bugs, add features and remove warnings. For
+complete list see C<Changes> file which comes with distribution.
+
+This module has been tested using C<html/test.html> with following browsers:
+
+=over 5
+
+=item Mozilla FireFox 0.8 to 1.0
+
+using DOM 2 C<document.implementation.createDocument>
+
+=item Internet Explorer 5.5 and 6.0
+
+using ActiveX C<Microsoft.XMLDOM> or C<MSXML2.DOMDocument>
+
+=item Konqueror 3.3
+
+using DOM 2 C<document.implementation.createDocument>
+
+=item Opera 7.54 (without Java)
+
+using experimental iframe implementation which is much slower than other methods.
+
+=back
+
+If searching doesn't work for your combination of operating system and
+browser, please open C<html/test.html> file and wait a while. It will search sample
+file included with distribution and report results. Reports with included
+test debugging are welcomed.
 
 =head1 jsFind methods
 

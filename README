@@ -1,4 +1,4 @@
-jsFind version 0.03
+jsFind version 0.05
 ===================
 
 This module can be used to create index files for jsFind, powerful tool
@@ -9,6 +9,11 @@ Main difference between this module and scripts delivered with jsFind are:
 
 - You don't need to use swish-e to create index
 - You can programatically (and incrementaly) create index for jsFind
+- search more than one index from same interface.
+
+It also includes numerous changes to JavaScript part of jsFind including
+experimental support for Opera 7.54 using iframes.
+
 
 INSTALLATION
 

@@ -15,6 +15,9 @@ WriteMakefile(
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'jsFind.pm', # retrieve abstract from module
        AUTHOR         => 'Dobrica Pavlinusic <dpavlin@rot13.org>') : ()),
+    depend => {
+    	dist => 'changelog',
+    },
 );
 
 # new target to create png files from GraphViz's dot files created by test
@@ -30,12 +33,15 @@ tree.png: tree.dot
 #words.png: words.dot
 #	dot -Tpng -o words.png words.dot
 
-html: blib/lib/jsFind.pm all
-	pod2html blib/lib/jsFind.pm jsFind.html
+html: jsFind.pm all
+	pod2html --infile jsFind.pm --outfile jsFind.html && rm -f pod2htm?.tmp
 
 clean ::
-	rm tree.* words.*
-	cd html && rm -Rf entities entities-utf8/ lorem/ words/
+	rm -f tree.* words.* homer_*
+	cd html && rm -Rf entities/ entities-utf8/ lorem/ words/ homer/ test_data.js
+
+changelog:
+	svn update && svn -v log > Changes
 
 MAKE_MORE
 }

@@ -32,7 +32,7 @@ Porro porro veritatis enim consectetur. Veniam doloremque culpa nobis assumenda 
 
 if (open(T,"| sort > tree.txt")) {
 	print T $t->to_string;
-	print STDERR "tree saved in tree.txt\n";
+	diag "tree saved in tree.txt";
 	close(T);
 }
 
@@ -46,7 +46,7 @@ cmp_ok($tree_size, '==', 85, "insert $tree_size/$i");
 
 if (open(T,"> tree.dot")) {
 	print T $t->to_dot;
-	print STDERR "Graphviz tree saved in tree.dot\n";
+	diag "Graphviz tree saved in tree.dot";
 	close(T);
 }
 

@@ -22,7 +22,7 @@ my $t = new jsFind B => 20;
 my $max = 10000;
 
 if (-r $dict) {
-	print STDERR " making B-Tree from $max words in $dict\n";
+	diag "making B-Tree from $max words in $dict";
 
 	open(D, "$dict") || die "can't open '$dict': $!";
 
@@ -51,13 +51,13 @@ if (-r $dict) {
 		print T $t->to_string;
 		close(T);
 	}
-	print STDERR " words.txt created\n";
+	diag "words.txt created";
 
 	if (open(T,"> words.dot")) {
 		print T $t->to_dot;
 		close(T);
 	}
-	print STDERR " words.dot created\n";
+	diag "words.dot created";
 
 	cmp_ok($t->to_jsfind("./html/words"), '==', $max, " jsfind index");
 }

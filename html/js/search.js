@@ -79,29 +79,25 @@ function intersect_results(data)
  From David Flanagan's, _Javascript:_The Definitive_Guide_, pg. 294-5,
   published by O'Reilly, 4th edition, 2002
 */
+
+var debug_div = null;
+
 function debug(msg)
 {
 //  return; // Disable debugging
 
-  if(!debug.box)
-  {
-    debug.box = document.createElement("div");
-    debug.box.setAttribute("style",
-                           "background-color:white" + 
-                           "font-family: monospace; " +
-                           "border: solid black 3px; "+
-                           "padding: 10px;");
+  if (! debug_div) debug_div = document.getElementById('debug');
 
-    document.body.appendChild(debug.box);
-    debug.box.innerHTML = "<h1 style='test-align:cent'>Debugging Output</h1>";
+  // this will create debug div if it doesn't exist.
+  if (! debug_div) {
+  	debug_div = document.createElement('div');
+	document.body.appendChild(debug_div);
   }
-
-  var p = document.createElement("p");
-  p.appendChild(document.createTextNode(msg));
-  debug.box.appendChild(p);
+  if (debug_div) {
+  	debug_div.appendChild(document.createTextNode(msg));
+	debug_div.appendChild(document.createElement("br"));
+  }
 }
-
-// 
 
 // Convert a number into a base 62 alphanumeric number string
 function convert(num)
@@ -133,6 +129,8 @@ function watchdog()
   watchdog_callback(new Array());
 }
 
+var xmldoc;
+
 // This function loads the XML document from the specified URL, and when
 // it is fully loaded, passes that document and the url to the specified
 // handler function.  This function works with any XML document
@@ -152,7 +150,7 @@ function loadXML(url, handler, data, result_handler)
     if (document.implementation && document.implementation.createDocument)
     {
      // Create a new Document object
-      var xmldoc = document.implementation.createDocument("", "", null);
+      xmldoc = document.implementation.createDocument("", "", null);
 
       // Specify what should happen when it finishes loading
       xmldoc.onload = function() { handler(xmldoc, url, data, result_handler); }
@@ -162,20 +160,48 @@ function loadXML(url, handler, data, result_handler)
 
       // And tell it what URL to load
       xmldoc.load(url);
+      return true;
     }
     // Otherwise use Microsoft's proprietary API for Internet Explorer
     // Something about not following standards once again
     else if (window.ActiveXObject)
     {  
-      //var xmldoc = new ActiveXObject("MSXML2.DOMDocument");   // Create doc.
-      var xmldoc = new ActiveXObject("Microsoft.XMLDOM");   // Create doc.
+      xmldoc = new ActiveXObject("Microsoft.XMLDOM");	// Create doc.
+      if (! xmldoc) xmldoc = new ActiveXObject("MSXML2.DOMDocument");	// Create doc.
       // Specify onload
       xmldoc.onreadystatechange = function()
       {              
         if (xmldoc.readyState == 4) handler(xmldoc, url, data, result_handler);
       }
       xmldoc.load(url);                                     // Start loading!
+      return true;
     }
+    // else fallback on usage of iframes to load xml (Opera 7.53 without Java and maybe old Mac browsers)
+    else {
+      debug("using iframe xml loader - experimental and slow");
+      if (! window.xml_iframe) {
+        debug("creating iframe");
+        window.xml_iframe = document.createElement('div');
+        window.xml_iframe.innerHTML = '<iframe src="'+url+'" name="xml_iframe" height="0" width="0" style="display: none;"></iframe>';
+        document.body.appendChild(window.xml_iframe);
+      } else {
+        debug("loading xml in existing iframe");
+        window.frames.xml_iframe.window.document.location.href = url;
+      }
+
+      // set timeout to re-check if iframe is loaded
+      window.iframe_timeout = window.setInterval('iframe_xml_loaded();',100);
+
+      // save some data for iframe_xml_loaded()
+      window.xml_handler = handler;
+      window.xml_url = url;
+      window.xml_data = data;
+      window.xml_result_handler = result_handler;
+      return true;
+    }
+    clearTimeout(watchdog_id);
+    debug("Browser incompatilibity: can't request XML document by one of supported methods");
+    return false;
   }
   catch(ex)
   {
@@ -187,6 +213,19 @@ function loadXML(url, handler, data, result_handler)
   }
 
   return true;
+}
+
+function iframe_xml_loaded() {
+  debug("iframe_xmldoc_loaded");
+  if (! window.frames['xml_iframe']) return;
+  var xml = eval('window.frames.xml_iframe.window.document');
+  if (xml) {
+	clearTimeout(window.iframe_timeout);
+  	debug("calling handler with ("+window.xml_url+","+window.xml_data+",...)");
+  	window.xml_handler(window.frames.xml_iframe.window.document, window.xml_url, window.xml_data, window.xml_result_handler);
+  } else {
+  	debug("can't eval iframe with xml");
+  }
 }
 
 function loadData(xmldoc, url, pos, result_handler)

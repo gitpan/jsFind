@@ -27,13 +27,15 @@
 
 function go(f)
 {
-  if(!document.search.query)
+  var form = document.getElementById('search');
+  if (! form && document.all) form = eval('document.all.search');
+  var query = form.elements['query'].value;
+  var index_name = form.elements['index_name'].options[form.elements['index_name'].selectedIndex].value;
+
+  if(!query)
   {
     return false;
   }
-
-  var query=document.search.query.value;
-  var index_name=document.search.index_name.value;
 
   if(query == null || query == "")
   {
@@ -58,6 +60,7 @@ function findDivHelper(n, id)
   {
     if((m.nodeType == 1) &&
        (m.tagName.toLowerCase() == "div") &&
+       m.getAttribute("id") &&
        (m.getAttribute("id").toLowerCase() == id.toLowerCase() ))
     {
       return m;
@@ -85,12 +88,15 @@ function printResults(result)
   debug("printResults("+result.length+")");
 
   var d = findDiv("results");
+  var header;
 
   // Null result output
   if(result.length < 1)
   {
-    var header = (d.getElementsByTagName("h2"))[0].firstChild;
-    header.replaceData(0, 14, "Nothing Found ");
+    header = (d.getElementsByTagName("h2"))[0].firstChild;
+    try {
+      header.replaceData(0, 14, "Nothing Found ");
+    } catch(e) {}
 
     if(search_err != "")
     {
@@ -133,8 +139,10 @@ function printResults(result)
   }
  
   // Change header
-  var header = (d.getElementsByTagName("h2"))[0].firstChild;
+  header = (d.getElementsByTagName("h2"))[0].firstChild;
 
-  header.replaceData(0, 14, "Search Results");
+  try {
+    header.replaceData(0, 14, "Search Results");
+  } catch(e) {}
 
 }

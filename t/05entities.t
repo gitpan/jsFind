@@ -29,7 +29,7 @@ foreach my $k (qw{
 
 if (open(T,"| sort > entities.txt")) {
 	print T $t->to_string;
-	print STDERR "entities saved in entities.txt\n";
+	diag "entities saved in entities.txt";
 	close(T);
 }
 
