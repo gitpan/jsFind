@@ -10,6 +10,7 @@ WriteMakefile(
 	'File::Path' => 0,
     	'HTML::Entities' => 0,
 	'Text::Iconv' => 0,
+	'POSIX' => 0,
     },
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'jsFind.pm', # retrieve abstract from module

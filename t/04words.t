@@ -17,7 +17,7 @@ if (! -r $dict) {
 
 BEGIN { use_ok('jsFind'); }
 
-my $t = new jsFind B => 6;
+my $t = new jsFind B => 20;
 
 my $max = 10000;
 

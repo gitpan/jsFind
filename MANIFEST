@@ -12,6 +12,7 @@ t/02btree.t
 t/03insert.t
 t/04words.t
 t/05entities.t
+t/06base62.t
 t/90xmllint.t
 t/99pod.t
 META.yml                                 Module meta-data (added by MakeMaker)

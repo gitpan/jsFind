@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use HTML::Entities;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use Exporter 'import';
 use Carp;
@@ -407,6 +407,7 @@ use strict;
 use Carp;
 use File::Path;
 use Text::Iconv;
+use POSIX;
 
 use base 'jsFind';
 
@@ -776,6 +777,47 @@ sub to_xml {
 	return $d;
 }
 
+=head2 base62
+
+Convert number to base62 (used for jsFind index filenames).
+
+ my $n = $tree->base62(50);
+
+=cut
+
+sub base62 {
+	my $self = shift;
+
+	my $value = shift;
+
+	confess("need non-negative number") if (! defined($value) || $value < 0);
+
+	my @digits = qw(
+		0 1 2 3 4 5 6 7 8 9
+		a b c d e f g h i j k l m n o p q r s t u v w x y z
+		A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+	);
+
+	my $base = scalar(@digits);
+	my $out = "";
+	my $pow = 1;
+	my $pos = 0;
+
+
+	if($value == 0) {
+		return "0";
+	}
+
+	while($value > 0) {
+		$pos = $value % $base;
+		$out = $digits[$pos] . $out;
+		$value = floor($value/$base);
+		$pow *= $base;
+	}
+
+	return $out;
+}
+
 =head2 to_jsfind
 
 Create jsFind xml files
@@ -786,7 +828,6 @@ Returns number of elements created
 
 =cut
 
-
 sub to_jsfind {
 	my $self = shift;
 	my ($path,$file) = @_;
@@ -795,6 +836,8 @@ sub to_jsfind {
 
 	confess("path is undefined.") unless ($path);
 	confess("file is undefined. Did you call \$t->root->to_jsfind(..) instead of \$t->to_jsfind(..) ?") unless (defined($file));
+
+	$file = $self->base62($file);
 
 	my $nr_keys = 0;
 
