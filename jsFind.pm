@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use HTML::Entities;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 use Exporter 'import';
 use Carp;
@@ -358,18 +358,55 @@ sub to_dot {
 Create xml index files for jsFind. This should be called after
 your B-Tree has been filled with data.
 
- $root->to_jsfind('/full/path/to/index/dir/');
+ $root->to_jsfind(
+ 	dir => '/full/path/to/index/dir/',
+	data_codepage => 'ISO-8859-2',
+	index_codepage => 'UTF-8',
+	output_filter => sub {
+		my $t = shift || return;
+		$t =~ s/&egrave;/e/;
+	}
+ );
+
+All options except C<dir> are optional.
 
 Returns number of nodes in created tree.
 
-There is also longer version if you want to recode your data charset
-into different one (probably UTF-8):
+Options:
 
- $root->to_jsfind('/full/path/to/index/dir/','ISO-8859-2','UTF-8');
+=over 4
 
-Destination encoding is UTF-8 by default, so you don't have to specify it.
+=item dir
 
- $root->to_jsfind('/full/path/to/index/dir/','WINDOWS-1250');
+Full path to directory for index (which will be created if needed).
+
+=item data_codepage
+
+If your imput data isn't in C<ISO-8859-1> encoding, you will have to specify
+this option.
+
+=item index_codepage
+
+If your index encoding is not C<UTF-8> use this option.
+
+If you are not using supplied JavaScript search code, or your browser is
+terribly broken and thinks that index shouldn't be in UTF-8 encoding, use
+this option to specify encoding for created XML index.
+
+=item output_filter
+
+B<this is just draft of documentation for option which is not implemented!>
+
+Code ref to sub which can do modifications on resulting XML file for node.
+Encoding of this data will be in L<index_codepage> and you have to take care
+not to break XML structure. Calling L<xmllint> on your result index
+(like C<t/90xmllint.t> does in this distribution) is a good idea after using
+this option.
+
+This option is also right place to plug in unaccenting function using
+L<Text::Unaccent>.
+
+=back
 
 =cut
 
@@ -379,21 +416,22 @@ my $iconv_l1;
 sub to_jsfind {
 	my $self = shift;
 
-	my $path = shift || confess "to_jsfind need path to your index!";
+	my %arg = @_;
 
-	my ($from_cp,$to_cp) = @_;
+	confess "to_jsfind need path to your index directory !" unless ($arg{'dir'});
 
-	$to_cp ||= 'UTF-8';
+	my $data_codepage = $arg{'data_codepage'};
+	my $index_codepage = $arg{'index_codepage'} || 'UTF-8';
 
-	if ($from_cp && $to_cp) {
-		$iconv = Text::Iconv->new($from_cp,$to_cp);
+	# create ISO-8859-1 iconv for HTML::Entities decode
+	$iconv_l1 = Text::Iconv->new('ISO-8859-1',$index_codepage);
+
+	# create another iconv for data
+	if ($data_codepage && $index_codepage) {
+		$iconv = Text::Iconv->new($data_codepage,$index_codepage);
 	}
-	$iconv_l1 = Text::Iconv->new('ISO-8859-1',$to_cp);
 
-	$path .= "/" if ($path =~ /\/$/);
-	#carp "creating directory for index '$path'" if (! -w $path);
-
-	return $self->root->to_jsfind($path,"0");
+	return $self->root->to_jsfind($arg{'dir'},"0");
 }
 
 
@@ -822,15 +860,15 @@ sub to_xml {
 	return $d;
 }
 
-=head2 base62
+=head2 base_x
 
-Convert number to base62 (used for jsFind index filenames).
+Convert number to base x (used for jsFind index filenames).
 
- my $n = $tree->base62(50);
+ my $n = $tree->base_x(50);
 
 =cut
 
-sub base62 {
+sub base_x {
 	my $self = shift;
 
 	my $value = shift;
@@ -840,7 +878,6 @@ sub base62 {
 	my @digits = qw(
 		0 1 2 3 4 5 6 7 8 9
 		a b c d e f g h i j k l m n o p q r s t u v w x y z
-		A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
 	);
 
 	my $base = scalar(@digits);
@@ -882,7 +919,7 @@ sub to_jsfind {
 	confess("path is undefined.") unless ($path);
 	confess("file is undefined. Did you call \$t->root->to_jsfind(..) instead of \$t->to_jsfind(..) ?") unless (defined($file));
 
-	$file = $self->base62($file);
+	$file = $self->base_x($file);
 
 	my $nr_keys = 0;
 

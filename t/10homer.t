@@ -10,9 +10,11 @@ use Data::Dumper;
 
 BEGIN { use_ok('jsFind'); }
 
-my $t = new jsFind B => 10;
+my $t = new jsFind B => 200;
 
-ok(-e "t/homer.txt", "Homer: The Odyssey preface");
+my $file = shift @ARGV || 't/homer.txt';
+
+ok(-e $file, "reading input file $file");
 
 my $line = 0;
 my $text = '';
@@ -25,7 +27,7 @@ my $res;
 
 my $full_text;
 
-ok(open(U, "t/homer.txt"), "open homer.txt");
+ok(open(U, $file), "open $file");
 while(<U>) {
 	chomp;
 	$line++;
@@ -103,6 +105,6 @@ diag "homer_words.txt created";
 
 my $total_words = scalar keys %words_usage;
 
-cmp_ok($t->to_jsfind("./html/homer"), '==', $total_words, " jsfind index with $total_words words");
+cmp_ok($t->to_jsfind(dir=>"./html/homer"), '==', $total_words, " jsfind index with $total_words words");
 
 #print Dumper($t);

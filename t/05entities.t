@@ -41,9 +41,16 @@ while(<T>) {
 
 cmp_ok($tree_size, '==', $i, "insert $tree_size/$i");
 
-ok($t->to_jsfind('./html/entities','ISO-8859-2'), "save to index");
+ok($t->to_jsfind(
+	dir => './html/entities',
+	data_codepage => 'ISO-8859-2'
+), "save to index");
 
-ok($t->to_jsfind('./html/entities-utf8','ISO-8859-2','UTF-8'), "save to utf-8 index");
+ok($t->to_jsfind(
+	dir => './html/entities-utf8',
+	data_codepage => 'ISO-8859-2',
+	index_codepage => 'UTF-8'
+), "save to utf-8 index");
 
 #ok_fail(
 

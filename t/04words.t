@@ -59,7 +59,7 @@ if (-r $dict) {
 	}
 	diag "words.dot created";
 
-	cmp_ok($t->to_jsfind("./html/words"), '==', $max, " jsfind index");
+	cmp_ok($t->to_jsfind(dir=>"./html/words"), '==', $max, " jsfind index");
 }
 
 

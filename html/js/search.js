@@ -27,7 +27,7 @@
 
 // Constants
 var conversion = new String
-      ("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY");
+      ("0123456789abcdefghijklmnopqrstuvwxyz");
 
 // State variables
 var query_left = "";

@@ -60,4 +60,4 @@ my $r = $t->B_search(Key => "velit",
 
 cmp_ok(keys %{$r}, '==', 1, "replace");
 
-$t->to_jsfind('./html/lorem');
+$t->to_jsfind(dir=>'./html/lorem');
