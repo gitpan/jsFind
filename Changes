@@ -1,0 +1,6 @@
+Revision history for Perl extension jsFind.
+
+0.01  Sun Jul  4 21:01:07 2004
+	- original version; created by h2xs 1.23 with options
+		-AXn Search::jsFind
+

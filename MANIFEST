@@ -1,0 +1,17 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+jsFind.pm
+html/search.html
+html/js/search.js
+html/js/usage.js
+html/js/getargs.js
+t/01load.t
+t/02btree.t
+t/03insert.t
+t/04words.t
+t/05entities.t
+t/90xmllint.t
+t/99pod.t
+META.yml                                 Module meta-data (added by MakeMaker)
